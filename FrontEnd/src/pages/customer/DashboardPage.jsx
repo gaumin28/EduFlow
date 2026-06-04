@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const NAV_ITEMS = [
   { icon: "dashboard", label: "Dashboard", active: true, filled: true },
@@ -120,6 +122,14 @@ function HeroContinueBar({ progress }) {
 }
 
 export default function DashboardPage() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
+
   return (
     <div className="bg-surface font-body-md text-on-surface">
       {/* TopNavBar */}
@@ -164,7 +174,10 @@ export default function DashboardPage() {
             <img
               alt="User avatar"
               className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA50Z4hKK9pTXUteuK39W5tsmY_ejDjF8D5-bKxXNFJnuAsjrAVgt5Od123Ncfj86_63jNw9lW_Ak2qB5BBAv1oAJmRvfMbG3SILZT-nbjxH0Q-eMjwrZYxCHJhOFEyNtsH410XfedNnQvXqHN34lQa-rfc_5hoOObAB4Zw-pb64SPmYKQ4V43X0ya0oflV3s4cuS5gjFddDDTGpGyGDXqtAw8VXHYLxJcXCCRCHUHeywRuCusURyuL-AEfPoJxD1uBwi4QW7abj-o"
+              src={
+                user?.avatarUrl ||
+                "https://lh3.googleusercontent.com/aida-public/AB6AXuA50Z4hKK9pTXUteuK39W5tsmY_ejDjF8D5-bKxXNFJnuAsjrAVgt5Od123Ncfj86_63jNw9lW_Ak2qB5BBAv1oAJmRvfMbG3SILZT-nbjxH0Q-eMjwrZYxCHJhOFEyNtsH410XfedNnQvXqHN34lQa-rfc_5hoOObAB4Zw-pb64SPmYKQ4V43X0ya0oflV3s4cuS5gjFddDDTGpGyGDXqtAw8VXHYLxJcXCCRCHUHeywRuCusURyuL-AEfPoJxD1uBwi4QW7abj-o"
+              }
             />
           </div>
         </div>
@@ -176,11 +189,11 @@ export default function DashboardPage() {
           <div className="px-6 mb-stack-md">
             <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low">
               <div className="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">
-                AJ
+                {user?.fullName?.[0] ?? "U"}
               </div>
               <div>
                 <p className="font-label-md text-label-md text-on-surface">
-                  Alex Johnson
+                  {user?.fullName ?? "User"}
                 </p>
                 <p className="font-body-sm text-[11px] text-on-surface-variant">
                   Premium Learner
@@ -223,7 +236,10 @@ export default function DashboardPage() {
                 Upgrade to Pro
               </button>
             </div>
-            <button className="flex items-center gap-3 w-full px-4 py-3 mt-4 text-error font-label-md hover:bg-error-container/10 rounded-xl transition-all">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 w-full px-4 py-3 mt-4 text-error font-label-md hover:bg-error-container/10 rounded-xl transition-all"
+            >
               <span className="material-symbols-outlined">logout</span>
               Logout
             </button>

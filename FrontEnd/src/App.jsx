@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import LoginPage from "./pages/auth/LoginPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
@@ -7,34 +8,55 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/customer/DashboardPage";
 import InstructorDashboardPage from "./pages/provider/InstructorDashboardPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Auth */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
-        <Route path="/security-settings" element={<SecuritySettingsPage />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Auth */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/security-settings" element={<SecuritySettingsPage />} />
 
-        {/* Customer */}
-        <Route path="/dashboard" element={<DashboardPage />} />
+          {/* Customer */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute roles={["student"]}>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Provider / Instructor */}
-        <Route
-          path="/instructor/dashboard"
-          element={<InstructorDashboardPage />}
-        />
+          {/* Provider / Instructor */}
+          <Route
+            path="/instructor/dashboard"
+            element={
+              <ProtectedRoute roles={["instructor"]}>
+                <InstructorDashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Admin */}
-        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+          {/* Admin */}
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute roles={["admin"]}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

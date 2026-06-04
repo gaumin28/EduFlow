@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const NAV_ITEMS = [
   { icon: "dashboard", label: "Dashboard", active: true },
@@ -150,6 +152,13 @@ const REVENUE_BARS = [
 ];
 
 export default function AdminDashboardPage() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
   const [visible, setVisible] = useState(false);
   const [hoveredRevBar, setHoveredRevBar] = useState(null);
 
@@ -196,11 +205,14 @@ export default function AdminDashboardPage() {
               <img
                 alt="User Profile"
                 className="w-10 h-10 rounded-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTEeIMk02ID5N890ARhqh0LF25nYq8OGosOtb8QGY-WhGLvqBJdDFHUb1U4jrLTdQhQrrWz1iy9svkh362giySlN5fs5XT93bUzGjX4a_J81JibyXGm6VNgRO68vW7hC9zDGNfAnwl0hDyZ_6arNB1VCYbd89NEd7VllQUdtdX9w_WxgNWR3jmWByg56c23MAFXSQevteNYE8jZyP98KQZT_hPFZzOuArpxezd5mI9zHVWob9fpXf2alJC-Rd28Tu-14k6Q3w6XpQ"
+                src={
+                  user?.avatarUrl ||
+                  "https://lh3.googleusercontent.com/aida-public/AB6AXuBTEeIMk02ID5N890ARhqh0LF25nYq8OGosOtb8QGY-WhGLvqBJdDFHUb1U4jrLTdQhQrrWz1iy9svkh362giySlN5fs5XT93bUzGjX4a_J81JibyXGm6VNgRO68vW7hC9zDGNfAnwl0hDyZ_6arNB1VCYbd89NEd7VllQUdtdX9w_WxgNWR3jmWByg56c23MAFXSQevteNYE8jZyP98KQZT_hPFZzOuArpxezd5mI9zHVWob9fpXf2alJC-Rd28Tu-14k6Q3w6XpQ"
+                }
               />
               <div>
                 <p className="font-label-md text-label-md text-on-surface font-bold">
-                  Alex Johnson
+                  {user?.fullName ?? "Admin"}
                 </p>
                 <p className="text-xs text-on-surface-variant">
                   Premium Learner
@@ -211,13 +223,13 @@ export default function AdminDashboardPage() {
               Upgrade to Pro
             </button>
           </div>
-          <a
-            href="#"
+          <button
+            onClick={handleLogout}
             className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-error transition-colors font-label-md text-label-md"
           >
             <span className="material-symbols-outlined">logout</span>
             <span>Logout</span>
-          </a>
+          </button>
         </div>
       </aside>
 

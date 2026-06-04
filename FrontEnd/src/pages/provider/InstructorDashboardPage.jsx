@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 
 const NAV_ITEMS = [
   { icon: "dashboard", label: "Dashboard", active: true },
@@ -103,6 +105,13 @@ function EngagementBar({ value }) {
 }
 
 export default function InstructorDashboardPage() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
   const [hoveredBar, setHoveredBar] = useState(null);
 
   return (
@@ -148,7 +157,10 @@ export default function InstructorDashboardPage() {
                 <img
                   alt="User avatar"
                   className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8bOjwGSqc2H0vTl4PB4uZF8ZzwuFTI0llrHXPMTtK0wGbcXrNFymtGVxXKnI6WpHeOPRbvaVPl0Yxzve_DCFGEuz0DOF1pELsi4bUY_nOEGLoCpEKhpe5OVPhsznvXkLpmhQtlAKTXn5SYilI2LdSlkul78O7GNPRtWEN6CjqY4AKt3J_IPw0pKsIvmZV8boUx4RfGr5yilgphITGovJlDZSmZoG6sxzM8A-29Y3MkoxEV2kgv2hBLc6AQo8yN7TgmVlb-x0Uyxw"
+                  src={
+                    user?.avatarUrl ||
+                    "https://lh3.googleusercontent.com/aida-public/AB6AXuD8bOjwGSqc2H0vTl4PB4uZF8ZzwuFTI0llrHXPMTtK0wGbcXrNFymtGVxXKnI6WpHeOPRbvaVPl0Yxzve_DCFGEuz0DOF1pELsi4bUY_nOEGLoCpEKhpe5OVPhsznvXkLpmhQtlAKTXn5SYilI2LdSlkul78O7GNPRtWEN6CjqY4AKt3J_IPw0pKsIvmZV8boUx4RfGr5yilgphITGovJlDZSmZoG6sxzM8A-29Y3MkoxEV2kgv2hBLc6AQo8yN7TgmVlb-x0Uyxw"
+                  }
                 />
               </div>
             </div>
@@ -162,7 +174,7 @@ export default function InstructorDashboardPage() {
           <div className="flex flex-col gap-[16px]">
             <div className="px-6 mb-[16px]">
               <span className="text-body-md font-bold text-on-surface block">
-                Alex Johnson
+                {user?.fullName ?? "Instructor"}
               </span>
               <span className="text-label-sm text-on-surface-variant">
                 Premium Learner
@@ -192,13 +204,13 @@ export default function InstructorDashboardPage() {
               </span>
               Upgrade to Pro
             </button>
-            <a
-              href="#"
+            <button
+              onClick={handleLogout}
               className="flex items-center gap-[16px] py-3 text-on-surface-variant hover:text-error transition-colors font-label-md text-label-md"
             >
               <span className="material-symbols-outlined">logout</span>
               Logout
-            </a>
+            </button>
           </div>
         </aside>
 

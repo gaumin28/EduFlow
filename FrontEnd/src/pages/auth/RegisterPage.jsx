@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { register } from "../../services/authService";
 
 function getStrength(password) {
   let strength = 0;
@@ -80,17 +82,29 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [terms, setTerms] = useState(false);
   const [status, setStatus] = useState("idle"); // idle | loading | success
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const strength = getStrength(password);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
+    setError("");
     setStatus("loading");
-    setTimeout(() => setStatus("success"), 1500);
+    try {
+      await register({ fullName, email, password });
+      setStatus("success");
+      setTimeout(() => navigate("/verify-email", { state: { email } }), 1500);
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Registration failed. Please try again.",
+      );
+      setStatus("idle");
+    }
   }
 
   const btnContent = () => {
@@ -339,6 +353,9 @@ export default function RegisterPage() {
               >
                 {btnContent()}
               </button>
+              {error && (
+                <p className="text-red-400 text-sm text-center">{error}</p>
+              )}
 
               {/* Divider */}
               <div className="relative py-4">
@@ -381,12 +398,12 @@ export default function RegisterPage() {
               <div className="text-center pt-stack-md">
                 <p className="font-body-sm text-body-sm text-on-surface-variant">
                   Already have an account?{" "}
-                  <a
+                  <Link
                     className="text-primary font-bold hover:underline"
-                    href="#"
+                    to="/login"
                   >
                     Login
-                  </a>
+                  </Link>
                 </p>
               </div>
             </form>

@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { changePassword, updateAvatar } from "../../services/userService";
+import { useAuth } from "../../contexts/AuthContext";
 
 const DEVICES = [
   {
@@ -36,23 +38,63 @@ const NAV_ITEMS = [
 ];
 
 export default function SecuritySettingsPage() {
+  const { user, setUser } = useAuth();
+  const fileInputRef = useRef(null);
+
   const [toastVisible, setToastVisible] = useState(false);
+  const [toastMsg, setToastMsg] = useState("Password updated successfully!");
   const [devices, setDevices] = useState(DEVICES);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [pwError, setPwError] = useState("");
+  const [savingPw, setSavingPw] = useState(false);
+  const [avatarSrc, setAvatarSrc] = useState(
+    user?.avatarUrl ||
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuB0JfhenafA3RbiAJW4KW62n9T04LZjgMeGHSP-9cBAehMfUATfT8lI5-7odsnbnqDaxrwPDZhuiShf8ofcWmTtifVEb8Y3rXOvXKmQLczKUepwmjY0R2o3MxrcDX3-_sHoeYLrKjselIxNv7vCdT9itgB7PNorHq8BLi1HY0FCMASqgym7cV0Rrgm2UyVUWkLi63-MSBMZmSXn7JEjsJR_A2uj0_SnlpxqgbBj9VVjkXnWiqAQXtlBwUAz0tDp4JEPzsUUxwc8x4Y",
+  );
 
-  function showToast() {
+  function showToast(msg = "Password updated successfully!") {
+    setToastMsg(msg);
     setToastVisible(true);
     setTimeout(() => setToastVisible(false), 5000);
   }
 
-  function handlePasswordSubmit(e) {
+  async function handlePasswordSubmit(e) {
     e.preventDefault();
-    showToast();
-    setCurrentPassword("");
-    setNewPassword("");
-    setConfirmNewPassword("");
+    if (newPassword !== confirmNewPassword) {
+      setPwError("Passwords do not match");
+      return;
+    }
+    setPwError("");
+    setSavingPw(true);
+    try {
+      await changePassword(currentPassword, newPassword);
+      showToast("Password updated successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+    } catch (err) {
+      setPwError(err.response?.data?.message || "Failed to update password.");
+    } finally {
+      setSavingPw(false);
+    }
+  }
+
+  async function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const preview = URL.createObjectURL(file);
+    setAvatarSrc(preview);
+    const formData = new FormData();
+    formData.append("avatar", file);
+    try {
+      const { data } = await updateAvatar(formData);
+      if (data.avatarUrl) setAvatarSrc(data.avatarUrl);
+      showToast("Avatar updated!");
+    } catch {
+      showToast("Failed to upload avatar.");
+    }
   }
 
   function removeDevice(id) {
@@ -193,7 +235,7 @@ export default function SecuritySettingsPage() {
                     <img
                       alt="Profile"
                       className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0JfhenafA3RbiAJW4KW62n9T04LZjgMeGHSP-9cBAehMfUATfT8lI5-7odsnbnqDaxrwPDZhuiShf8ofcWmTtifVEb8Y3rXOvXKmQLczKUepwmjY0R2o3MxrcDX3-_sHoeYLrKjselIxNv7vCdT9itgB7PNorHq8BLi1HY0FCMASqgym7cV0Rrgm2UyVUWkLi63-MSBMZmSXn7JEjsJR_A2uj0_SnlpxqgbBj9VVjkXnWiqAQXtlBwUAz0tDp4JEPzsUUxwc8x4Y"
+                      src={avatarSrc}
                     />
                   </div>
                   <div className="absolute inset-0 bg-primary/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -209,9 +251,19 @@ export default function SecuritySettingsPage() {
                   Upload a new photo to personalize your profile across the
                   platform.
                 </p>
-                <button className="bg-primary text-white font-label-md text-label-md py-2 px-stack-lg rounded-full hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95">
+                <button
+                  className="bg-primary text-white font-label-md text-label-md py-2 px-stack-lg rounded-full hover:shadow-lg hover:shadow-primary/30 transition-all active:scale-95"
+                  onClick={() => fileInputRef.current?.click()}
+                >
                   Update Avatar
                 </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
               </section>
 
               {/* Change Password */}
@@ -263,12 +315,16 @@ export default function SecuritySettingsPage() {
                       />
                     </div>
                   </div>
-                  <div className="flex justify-end pt-2">
+                  <div className="flex justify-end pt-2 flex-col items-end gap-2">
+                    {pwError && (
+                      <p className="text-red-400 text-sm">{pwError}</p>
+                    )}
                     <button
                       className="bg-primary text-white font-label-md text-label-md py-2.5 px-stack-lg rounded-lg hover:bg-primary-container transition-all"
                       type="submit"
+                      disabled={savingPw}
                     >
-                      Save Changes
+                      {savingPw ? "Saving..." : "Save Changes"}
                     </button>
                   </div>
                 </form>
@@ -401,9 +457,7 @@ export default function SecuritySettingsPage() {
         </span>
         <div>
           <p className="font-label-md text-label-md text-on-surface">Success</p>
-          <p className="text-xs text-on-surface-variant">
-            Your changes have been saved successfully.
-          </p>
+          <p className="text-xs text-on-surface-variant">{toastMsg}</p>
         </div>
         <button
           className="material-symbols-outlined text-outline-variant hover:text-on-surface"

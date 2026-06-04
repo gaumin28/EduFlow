@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { verifyEmail, resendVerification } from "../../services/authService";
+import { useAuth } from "../../contexts/AuthContext";
 
 const STATE = {
   PENDING: "pending",
@@ -7,6 +10,44 @@ const STATE = {
 
 export default function VerifyEmailPage() {
   const [activeState, setActiveState] = useState(STATE.PENDING);
+  const [resending, setResending] = useState(false);
+  const [resendMsg, setResendMsg] = useState("");
+  const [verifyError, setVerifyError] = useState("");
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+
+  const displayEmail = location.state?.email ?? user?.email ?? "your email";
+
+  // Auto-verify if token present in URL (?token=xxx)
+  useEffect(() => {
+    const token = searchParams.get("token");
+    if (!token) return;
+    verifyEmail(token)
+      .then(() => setActiveState(STATE.SUCCESS))
+      .catch(() => setVerifyError("Verification link is invalid or expired."));
+  }, [searchParams]);
+
+  const handleResend = async () => {
+    setResending(true);
+    setResendMsg("");
+    try {
+      await resendVerification(displayEmail);
+      setResendMsg("Verification email resent! Check your inbox.");
+    } catch {
+      setResendMsg("Failed to resend. Please try again.");
+    } finally {
+      setResending(false);
+    }
+  };
+
+  const handleGoToDashboard = () => {
+    if (user?.role === "admin") navigate("/admin/dashboard");
+    else if (user?.role === "instructor") navigate("/instructor/dashboard");
+    else navigate("/dashboard");
+  };
 
   return (
     <div className="bg-background text-on-background min-h-screen font-body-md [&::selection]:bg-primary-container [&::selection]:text-on-primary-container">
@@ -25,29 +66,11 @@ export default function VerifyEmailPage() {
         </div>
 
         <div className="w-full max-w-xl">
-          {/* State Toggle */}
-          <div className="flex justify-center gap-stack-md mb-stack-lg">
-            <button
-              className={`px-4 py-2 rounded-full font-label-md text-label-md transition-all ${
-                activeState === STATE.PENDING
-                  ? "bg-primary text-on-primary shadow-lg scale-100"
-                  : "bg-surface-container text-on-surface-variant hover:bg-surface-variant"
-              }`}
-              onClick={() => setActiveState(STATE.PENDING)}
-            >
-              Pending State
-            </button>
-            <button
-              className={`px-4 py-2 rounded-full font-label-md text-label-md transition-all ${
-                activeState === STATE.SUCCESS
-                  ? "bg-primary text-on-primary shadow-lg scale-100"
-                  : "bg-surface-container text-on-surface-variant hover:bg-surface-variant"
-              }`}
-              onClick={() => setActiveState(STATE.SUCCESS)}
-            >
-              Success State
-            </button>
-          </div>
+          {verifyError && (
+            <p className="text-red-400 text-sm text-center mb-4">
+              {verifyError}
+            </p>
+          )}
 
           {/* Pending Card */}
           {activeState === STATE.PENDING && (
@@ -73,7 +96,7 @@ export default function VerifyEmailPage() {
                 <p className="font-body-md text-body-md text-on-surface-variant mb-stack-lg max-w-md">
                   We&apos;ve sent a verification link to{" "}
                   <span className="font-bold text-on-surface">
-                    alex.j@example.com
+                    {displayEmail}
                   </span>
                   . Please click the link in the email to activate your account
                   and start learning.
@@ -86,13 +109,22 @@ export default function VerifyEmailPage() {
                       open_in_new
                     </span>
                   </button>
-                  <button className="bg-surface-container-high text-on-surface-variant px-8 py-4 rounded-xl font-label-md text-label-md hover:bg-surface-variant transition-all flex items-center justify-center gap-2">
-                    Resend Verification
+                  <button
+                    className="bg-surface-container-high text-on-surface-variant px-8 py-4 rounded-xl font-label-md text-label-md hover:bg-surface-variant transition-all flex items-center justify-center gap-2"
+                    onClick={handleResend}
+                    disabled={resending}
+                  >
+                    {resending ? "Sending..." : "Resend Verification"}
                     <span className="material-symbols-outlined text-[20px]">
                       refresh
                     </span>
                   </button>
                 </div>
+                {resendMsg && (
+                  <p className="mt-3 font-body-sm text-body-sm text-primary text-center">
+                    {resendMsg}
+                  </p>
+                )}
 
                 <div className="mt-stack-lg pt-stack-md border-t border-outline-variant/30 w-full">
                   <p className="font-body-sm text-body-sm text-on-surface-variant">
@@ -133,7 +165,10 @@ export default function VerifyEmailPage() {
                 </p>
 
                 <div className="w-full sm:w-auto">
-                  <button className="bg-linear-to-r from-primary to-tertiary text-on-primary px-12 py-4 rounded-xl font-label-md text-label-md shadow-lg hover:shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group">
+                  <button
+                    onClick={handleGoToDashboard}
+                    className="bg-linear-to-r from-primary to-tertiary text-on-primary px-12 py-4 rounded-xl font-label-md text-label-md shadow-lg hover:shadow-primary/30 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group"
+                  >
                     Go to Dashboard
                     <span className="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">
                       arrow_forward

@@ -1,7 +1,32 @@
 import { useState, useEffect } from "react";
 
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSubmitting(true);
+    try {
+      const user = await login(email, password);
+      if (user.role === "admin") navigate("/admin/dashboard");
+      else if (user.role === "instructor") navigate("/instructor/dashboard");
+      else navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.message || "Invalid email or password");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -135,10 +160,7 @@ export default function LoginPage() {
             </div>
 
             {/* Login Form */}
-            <form
-              className="space-y-stack-md"
-              onSubmit={(e) => e.preventDefault()}
-            >
+            <form className="space-y-stack-md" onSubmit={handleSubmit}>
               <div>
                 <label
                   className="block font-label-md text-label-md text-on-surface-variant mb-2"
@@ -158,6 +180,8 @@ export default function LoginPage() {
                     placeholder="alex@example.com"
                     required
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
@@ -181,6 +205,10 @@ export default function LoginPage() {
                     placeholder="••••••••"
                     required
                     type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
                   />
                   <button
                     type="button"
@@ -204,17 +232,18 @@ export default function LoginPage() {
                     Remember me
                   </span>
                 </label>
-                <a
+                <Link
                   className="font-label-md text-label-md text-primary hover:text-primary-fixed-dim transition-colors"
-                  href="#"
+                  to="/forgot-password"
                 >
                   Forgot password?
-                </a>
+                </Link>
               </div>
-
+              {error && <p className="text-red-400 text-sm">{error}</p>}
               <button
                 className="w-full primary-gradient text-white font-label-md text-label-md py-4 rounded-xl transition-all duration-200 transform active:scale-[0.98] shadow-lg shadow-primary/20"
                 type="submit"
+                disabled={submitting}
               >
                 Log In
               </button>
@@ -222,12 +251,12 @@ export default function LoginPage() {
 
             <p className="mt-stack-lg text-center font-body-sm text-body-sm text-on-surface-variant">
               Don&apos;t have an account?{" "}
-              <a
+              <Link
                 className="text-primary font-bold hover:underline transition-all"
-                href="#"
+                to="/register"
               >
                 Register
-              </a>
+              </Link>
             </p>
           </div>
 

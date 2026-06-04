@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { forgotPassword, resetPassword } from "../../services/authService";
 
 const SCREEN = {
   FORGOT: "forgot",
@@ -24,6 +26,9 @@ export default function ForgotPasswordPage() {
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [passError, setPassError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const navigate = useNavigate();
 
   const { strength, hasLength, hasSpecial } = getStrength(newPassword);
 
@@ -40,13 +45,22 @@ export default function ForgotPasswordPage() {
     return "bg-emerald-500";
   }
 
-  function handleForgot(e) {
+  async function handleForgot(e) {
     e.preventDefault();
-    setSentEmail(email);
-    setScreen(SCREEN.SUCCESS);
+    setApiError("");
+    setSubmitting(true);
+    try {
+      await forgotPassword(email);
+      setSentEmail(email);
+      setScreen(SCREEN.SUCCESS);
+    } catch (err) {
+      setApiError(err.response?.data?.message || "Failed to send reset link.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
-  function handleFinalSubmit(e) {
+  async function handleFinalSubmit(e) {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
       setPassError("Passwords do not match");
@@ -57,8 +71,17 @@ export default function ForgotPasswordPage() {
       return;
     }
     setPassError("");
-    alert("Password reset successfully! Redirecting to login...");
-    resetFlow();
+    setApiError("");
+    setSubmitting(true);
+    try {
+      await resetPassword(sentEmail, newPassword);
+      resetFlow();
+      navigate("/login");
+    } catch (err) {
+      setApiError(err.response?.data?.message || "Failed to reset password.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function resetFlow() {
@@ -146,21 +169,27 @@ export default function ForgotPasswordPage() {
                 <button
                   className="w-full py-3 px-4 rounded-lg gradient-primary text-white font-label-md text-label-md shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
                   type="submit"
+                  disabled={submitting}
                 >
-                  Send reset link
+                  {submitting ? "Sending..." : "Send reset link"}
                 </button>
+                {apiError && (
+                  <p className="text-red-400 text-sm text-center mt-2">
+                    {apiError}
+                  </p>
+                )}
               </form>
 
               <div className="text-center pt-stack-sm">
-                <a
+                <Link
                   className="inline-flex items-center gap-1.5 font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors group"
-                  href="#"
+                  to="/login"
                 >
                   <span className="material-symbols-outlined text-[18px] group-hover:-translate-x-0.5 transition-transform">
                     arrow_back
                   </span>
                   Back to login
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -361,8 +390,9 @@ export default function ForgotPasswordPage() {
                 <button
                   className="w-full py-3 px-4 rounded-lg gradient-primary text-white font-label-md text-label-md shadow-md hover:shadow-lg transition-all active:scale-[0.98]"
                   type="submit"
+                  disabled={submitting}
                 >
-                  Reset password
+                  {submitting ? "Resetting..." : "Reset password"}
                 </button>
               </form>
 

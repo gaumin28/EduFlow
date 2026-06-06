@@ -1,0 +1,45 @@
+[{
+  "_id": {
+    "$oid": "69e1965f1e4d84c00e51c013"
+  },
+  "cate_name": "Phát triển web",
+  "icon_key": "web",
+  "quantity": 10,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69e1965f1e4d84c00e51c014"
+  },
+  "cate_name": "Khoa học dữ liệu",
+  "icon_key": "data",
+  "quantity": 4,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69e1965f1e4d84c00e51c015"
+  },
+  "cate_name": "Ứng dụng di động",
+  "icon_key": "mobile",
+  "quantity": 4,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69e1965f1e4d84c00e51c016"
+  },
+  "cate_name": "Ngôn ngữ lập trình",
+  "icon_key": "language",
+  "quantity": 6,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "69e1965f1e4d84c00e51c017"
+  },
+  "cate_name": "Phát triển trò chơi",
+  "icon_key": "game",
+  "quantity": 9,
+  "__v": 0
+}]

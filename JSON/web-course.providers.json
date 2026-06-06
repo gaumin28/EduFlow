@@ -1,0 +1,198 @@
+[{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30d4"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f1"
+  },
+  "provider_name": "Hỏi dân IT với Eric",
+  "career": "Lập trình",
+  "email": "hoidanit123@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.508Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.508Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30d5"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f2"
+  },
+  "provider_name": "Đỗ Tấn Thành",
+  "career": "Lập trình",
+  "email": "dtt12@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.511Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.511Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30d6"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f3"
+  },
+  "provider_name": "Khánh Nguyễn",
+  "career": "Lập trình",
+  "email": "kn123@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30d7"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f4"
+  },
+  "provider_name": "Lam Nguyen",
+  "career": "Nghiên cứu với Khoa học dữ liệu",
+  "email": "ln123@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30d8"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f5"
+  },
+  "provider_name": "Chức Nguyễn Văn",
+  "career": "Nghiên cứu",
+  "email": "cnv123@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30d9"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f6"
+  },
+  "provider_name": "Hiệp EZSE",
+  "career": "Lập trình",
+  "email": "hiep13@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30da"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f7"
+  },
+  "provider_name": "Thiện Phạm Đình",
+  "career": "Lập trình web",
+  "email": "pdth12@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30db"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f8"
+  },
+  "provider_name": "Colt Steele",
+  "career": "Lập trình web",
+  "email": "colt22@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69e1a960c87dee8a44fd30dc"
+  },
+  "user_id": {
+    "$oid": "69e1a81e9d39fc8266ca94f9"
+  },
+  "provider_name": "Brad Schiff",
+  "career": "Development Web",
+  "email": "brad11@gmail.com",
+  "images": [
+    "images/sigma_180.png"
+  ],
+  "status": "approved",
+  "__v": 0,
+  "createdAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  },
+  "updatedAt": {
+    "$date": "2026-04-17T03:30:40.512Z"
+  }
+}]

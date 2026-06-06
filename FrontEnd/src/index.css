@@ -170,6 +170,37 @@
   .glass-card {
     backdrop-filter: blur(12px);
     background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+  }
+  .hero-gradient {
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(79, 70, 229, 0.05) 0%,
+      transparent 70%
+    );
+  }
+  .shimmer-btn {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-btn::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      45deg,
+      transparent,
+      rgba(255, 255, 255, 0.1),
+      transparent
+    );
+    transform: rotate(45deg);
+    transition: left 0.5s;
+  }
+  .shimmer-btn:hover::after {
+    left: 120%;
   }
   .float-animation {
     animation: float 6s ease-in-out infinite;

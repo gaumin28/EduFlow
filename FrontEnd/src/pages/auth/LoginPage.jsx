@@ -19,8 +19,10 @@ export default function LoginPage() {
     try {
       const user = await login(email, password);
       if (user.role === "admin") navigate("/admin/dashboard");
-      else if (user.role === "instructor") navigate("/instructor/dashboard");
-      else navigate("/dashboard");
+      else if (["provider", "instructor"].includes(user.role))
+        navigate("/instructor/dashboard");
+      else if (["customer", "student"].includes(user.role)) navigate("/dashboard");
+      else navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid email or password");
     } finally {

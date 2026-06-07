@@ -1,32 +1,49 @@
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-  withCredentials: true,
+  baseURL: API_BASE_URL,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("accessToken");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("accessToken");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 api.interceptors.response.use(
   (res) => res,
-  async (err) => {
-    if (err.response?.status === 401 && !err.config._retry) {
-      err.config._retry = true;
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
-        {},
-        { withCredentials: true },
-      );
-      localStorage.setItem("accessToken", data.accessToken);
-      err.config.headers.Authorization = `Bearer ${data.accessToken}`;
-      return api(err.config);
+  (err) => {
+    if (err.response?.status === 401 && localStorage.getItem("accessToken")) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+
+      const protectedPaths = [
+        "/admin",
+        "/dashboard",
+        "/instructor",
+        "/security-settings",
+      ];
+
+      if (
+        protectedPaths.some((path) =>
+          window.location.pathname.startsWith(path)
+        )
+      ) {
+        window.location.assign("/login");
+      }
     }
+
     return Promise.reject(err);
-  },
+  }
 );
 
 export default api;

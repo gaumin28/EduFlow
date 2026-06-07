@@ -38,7 +38,7 @@ const NAV_ITEMS = [
 ];
 
 export default function SecuritySettingsPage() {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const fileInputRef = useRef(null);
 
   const [toastVisible, setToastVisible] = useState(false);

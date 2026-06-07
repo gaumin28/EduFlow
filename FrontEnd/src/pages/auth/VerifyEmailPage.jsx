@@ -45,8 +45,10 @@ export default function VerifyEmailPage() {
 
   const handleGoToDashboard = () => {
     if (user?.role === "admin") navigate("/admin/dashboard");
-    else if (user?.role === "instructor") navigate("/instructor/dashboard");
-    else navigate("/dashboard");
+    else if (["provider", "instructor"].includes(user?.role))
+      navigate("/instructor/dashboard");
+    else if (["customer", "student"].includes(user?.role)) navigate("/dashboard");
+    else navigate("/");
   };
 
   return (

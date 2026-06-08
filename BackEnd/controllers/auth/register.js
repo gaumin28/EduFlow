@@ -3,16 +3,19 @@ import UserModel from "../../models/user.js";
 
 export const register = async (req, res) => {
   try {
-    const { email, username, password, confirmPassword } = req.body;
+    const { email, username, fullName, password, confirmPassword } = req.body;
+
+    const normalizedUsername = (username || fullName || "").trim();
 
     // ✅ Validate dữ liệu
-    if (!email || !username || !password || !confirmPassword) {
+    if (!email || !normalizedUsername || !password) {
       return res.status(400).json({
         message: "Vui lòng nhập đầy đủ thông tin",
       });
     }
 
-    if (password !== confirmPassword) {
+    // If confirmPassword is provided, enforce match; otherwise rely on frontend validation.
+    if (confirmPassword !== undefined && password !== confirmPassword) {
       return res.status(400).json({
         message: "Mật khẩu xác nhận không khớp",
       });
@@ -32,7 +35,7 @@ export const register = async (req, res) => {
     // ✅ Tạo user theo model
     const newUser = await UserModel.create({
       email,
-      username,
+      username: normalizedUsername,
       password: hashedPassword,
       role: "customer",
       flag: false,

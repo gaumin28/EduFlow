@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import HomePage from "./pages/home/HomePage";
+import CourseSearchPage from "./pages/home/CourseSearchPage";
 import LoginPage from "./pages/auth/LoginPage";
 import ForgotPasswordPage from "./pages/auth/ForgotPasswordPage";
 import VerifyEmailPage from "./pages/auth/VerifyEmailPage";
@@ -8,6 +9,7 @@ import SecuritySettingsPage from "./pages/auth/SecuritySettingsPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/customer/DashboardPage";
 import InstructorDashboardPage from "./pages/provider/InstructorDashboardPage";
+import InstructorProfilePage from "./pages/provider/InstructorProfilePage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -18,6 +20,11 @@ function App() {
         <Routes>
           {/* Home */}
           <Route path="/" element={<HomePage />} />
+          <Route path="/courses/search" element={<CourseSearchPage />} />
+          <Route
+            path="/development"
+            element={<Navigate to="/courses/search" replace />}
+          />
 
           {/* Auth */}
           <Route path="/login" element={<LoginPage />} />
@@ -30,9 +37,9 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute roles={["student"]}>
-                <DashboardPage />
-              </ProtectedRoute>
+              // <ProtectedRoute roles={["student"]}>
+              <DashboardPage />
+              // </ProtectedRoute>
             }
           />
 
@@ -44,6 +51,10 @@ function App() {
                 <InstructorDashboardPage />
               </ProtectedRoute>
             }
+          />
+          <Route
+            path="/instructors/profile"
+            element={<InstructorProfilePage />}
           />
 
           {/* Admin */}

@@ -1,6 +1,23 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const normalizeApiBaseUrl = (rawUrl) => {
+  const value = (rawUrl || "").trim();
+
+  if (!value) return "http://localhost:8080";
+
+  // Accept shorthand like ":8080" and normalize to localhost.
+  if (value.startsWith(":")) {
+    return `http://localhost${value}`;
+  }
+
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+
+  return `http://${value}`;
+};
+
+const API_BASE_URL = normalizeApiBaseUrl(import.meta.env.VITE_API_URL);
 
 const api = axios.create({
   baseURL: API_BASE_URL,

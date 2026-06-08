@@ -120,9 +120,11 @@ mongoose
 app.use("/", routerUser);
 
 // Đăng nhập
+app.use("/auth", routerLogin);
 app.use("/", routerLogin);
 
 // Đăng ký
+app.use("/auth", routerRegister);
 app.use("/", routerRegister);
 
 // Đổi mật khẩu
